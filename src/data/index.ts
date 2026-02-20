@@ -25,7 +25,7 @@ const parsed: RawRoadmap[] = Object.values(rawFiles).map(
 );
 
 export const departments: Record<string, DepartmentData> = {};
-export const departmentList: Array<{ id: string; label: string; file?: string }> = [];
+export const departmentList: Array<{ id: string; label: string }> = [];
 
 for (const dept of parsed) {
   departments[dept.id] = {
@@ -36,6 +36,5 @@ for (const dept of parsed) {
   departmentList.push({
     id: dept.id,
     label: dept.label,
-    ...(dept.pdf ? { file: dept.pdf } : {}),
   });
 }
