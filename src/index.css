@@ -59,6 +59,12 @@ body {
   stroke: #6b7280;
 }
 
+/* Make edges completely non-interactive so they don't block panning */
+.react-flow__edge,
+.react-flow__edge-interaction {
+  pointer-events: none !important;
+}
+
 /* Custom zoom slider */
 .zoom-slider {
   -webkit-appearance: none;
