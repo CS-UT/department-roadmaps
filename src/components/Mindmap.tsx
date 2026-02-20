@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import {
   ReactFlow,
   Background,
@@ -17,6 +17,7 @@ import Legend from './Legend';
 import { buildGraph } from './layoutEngine';
 import type { DepartmentData, CourseCategory } from '../data/types';
 import type { CourseNodeData } from './CourseNode';
+import { useCompletedCourses } from '../hooks/useCompletedCourses';
 
 const ALL_CATEGORIES: CourseCategory[] = ['base', 'specialized', 'elective', 'special'];
 
@@ -60,12 +61,25 @@ export default function Mindmap({ department }: MindmapProps) {
     () => new Set(ALL_CATEGORIES),
   );
 
+  const [completedIds, toggleCompleted, clearAllCompleted] = useCompletedCourses(department.id);
+
   // Build a category lookup from department courses
   const categoryMap = useMemo(() => {
     const m = new Map<string, CourseCategory>();
     for (const c of department.courses) m.set(c.id, c.category);
     return m;
   }, [department]);
+
+  // Compute completed/total credits
+  const { completedCredits, totalCredits } = useMemo(() => {
+    let completed = 0;
+    let total = 0;
+    for (const c of department.courses) {
+      total += c.credits;
+      if (completedIds.has(c.id)) completed += c.credits;
+    }
+    return { completedCredits: completed, totalCredits: total };
+  }, [department.courses, completedIds]);
 
   // Reset when department changes
   useMemo(() => {
@@ -74,6 +88,16 @@ export default function Mindmap({ department }: MindmapProps) {
     setSelectedId(null);
     setActiveCategories(new Set(ALL_CATEGORIES));
   }, [initialNodes, initialEdges, setNodes, setEdges]);
+
+  // Sync completedIds into node data (decoupled from highlight/filter)
+  useEffect(() => {
+    setNodes((nds) =>
+      nds.map((n) => ({
+        ...n,
+        data: { ...n.data, completed: completedIds.has(n.id) },
+      })),
+    );
+  }, [completedIds, setNodes]);
 
   const highlightConnections = useCallback(
     (nodeId: string | null) => {
@@ -315,7 +339,18 @@ export default function Mindmap({ department }: MindmapProps) {
 
       {/* Legend / filter — top right, horizontally scrollable on mobile */}
       <div className="absolute top-2 right-2 sm:top-3 sm:right-3 left-12 sm:left-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shadow-md border border-gray-200 dark:border-gray-700 z-10 overflow-x-auto">
-        <Legend activeCategories={activeCategories} onToggle={handleCategoryToggle} />
+        <Legend
+          activeCategories={activeCategories}
+          onToggle={handleCategoryToggle}
+          completedCredits={completedCredits}
+          totalCredits={totalCredits}
+          hasCompleted={completedIds.size > 0}
+          onClearCompleted={() => {
+            if (window.confirm('آیا از پاک کردن تمام دروس گذرانده اطمینان دارید؟')) {
+              clearAllCompleted();
+            }
+          }}
+        />
       </div>
 
       {/* Course detail panel — bottom sheet on mobile, top-left card on desktop */}
@@ -374,6 +409,16 @@ export default function Mindmap({ department }: MindmapProps) {
               </div>
             )}
           </div>
+          <button
+            onClick={() => toggleCompleted(selectedCourse.id)}
+            className={`mt-3 w-full py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+              completedIds.has(selectedCourse.id)
+                ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-green-50 dark:hover:bg-green-900/20'
+            }`}
+          >
+            {completedIds.has(selectedCourse.id) ? 'گذرانده شد ✓' : 'علامت‌گذاری به عنوان گذرانده'}
+          </button>
         </div>
       )}
     </div>

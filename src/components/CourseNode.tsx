@@ -8,6 +8,7 @@ export interface CourseNodeData {
   category: CourseCategory;
   highlighted?: boolean;
   dimmed?: boolean;
+  completed?: boolean;
   [key: string]: unknown;
 }
 
@@ -46,17 +47,24 @@ function CourseNodeComponent({ data }: NodeProps<CourseNodeType>) {
   const highlighted = data.highlighted
     ? 'ring-2 ring-primary-500 dark:ring-primary-400 shadow-lg shadow-primary-200/60 dark:shadow-primary-800/60 scale-105'
     : '';
+  const completed = data.completed && !data.dimmed;
+  const completedStyle = data.completed ? 'opacity-80 border-r-[3px] border-r-green-500' : '';
 
   return (
     <div
       className={`
-        px-2.5 py-1.5 rounded-lg border-[1.5px] cursor-pointer
+        relative px-2.5 py-1.5 rounded-lg border-[1.5px] cursor-pointer
         transition-all duration-200
         w-[140px]
         hover:shadow-md hover:scale-[1.03]
-        ${style.bg} ${style.border} ${dimmed} ${highlighted}
+        ${style.bg} ${style.border} ${dimmed} ${highlighted} ${completedStyle}
       `}
     >
+      {completed && (
+        <span className="absolute -top-1.5 -right-1.5 w-[14px] h-[14px] rounded-full bg-green-500 flex items-center justify-center text-white text-[8px] leading-none shadow-sm z-10">
+          ✓
+        </span>
+      )}
       <Handle
         type="target"
         position={Position.Top}
