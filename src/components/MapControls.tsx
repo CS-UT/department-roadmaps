@@ -67,8 +67,8 @@ export default function MapControls({ containerRef }: MapControlsProps) {
         zoomTo(1, { duration: 200 });
       }
     };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    window.addEventListener('keydown', handler, { capture: true });
+    return () => window.removeEventListener('keydown', handler, { capture: true });
   }, [zoomIn, zoomOut, zoomTo]);
 
   const btnBase =
