@@ -18,7 +18,7 @@ courses:
   - id: st-physics1
     name: فیزیک عمومی ۱
     credits: 3
-    category: base
+    category: elective
 
   - id: st-intro-cs
     name: مبانی کامپیوتر و برنامه‌سازی
@@ -28,17 +28,17 @@ courses:
   - id: st-prob1
     name: احتمال ۱
     credits: 4
-    category: base
+    category: specialized
 
   - id: st-combinatorics-foundations
     name: مبانی ترکیبیات
     credits: 4
-    category: base
+    category: elective
 
   - id: st-calc2
     name: ریاضی عمومی ۲
     credits: 4
-    category: base
+    category: elective
     prerequisites: [st-calc1]
 
   - id: st-analysis1
@@ -50,68 +50,68 @@ courses:
   - id: st-physics2
     name: فیزیک عمومی ۲
     credits: 3
-    category: base
+    category: elective
     prerequisites: [st-physics1]
 
   - id: st-linear-algebra
     name: جبرخطی
     credits: 4
-    category: base
+    category: specialized
     prerequisites: [st-math-foundations]
 
   - id: st-adv-programming
     name: برنامه‌سازی پیشرفته
     credits: 4
-    category: base
+    category: elective
     prerequisites: [st-intro-cs]
 
   - id: st-stat-methods
     name: روش‌های آماری
     credits: 3
-    category: base
+    category: specialized
     prerequisites: [st-prob1]
 
   # ─── Specialized Courses (تخصصی) ───
   - id: st-data-structures
     name: ساختمان داده‌ها و الگوریتم‌ها
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [st-adv-programming]
 
   - id: st-algorithm-design
     name: طراحی و تحلیل الگوریتم‌ها
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [st-data-structures]
 
   - id: st-logic-foundations
     name: مبانی منطق
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [st-math-foundations]
 
   - id: st-computer-systems
     name: اصول سیستم‌های کامپیوتری
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [st-adv-programming]
 
   - id: st-assembly
     name: زبان ماشین و اسمبلی
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [st-computer-systems]
 
   - id: st-scientific-computing
     name: محاسبات علمی
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [st-linear-algebra]
 
   - id: st-ai
     name: هوش مصنوعی
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [st-data-structures]
 
   - id: st-data-mining
@@ -123,18 +123,18 @@ courses:
   - id: st-os
     name: اصول سیستم‌های عامل
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [st-data-structures]
 
   - id: st-scientific-writing
     name: نگارش علمی
     credits: 3
-    category: specialized
+    category: elective
 
   - id: st-computation-theory-foundations
     name: مبانی نظریه محاسبه
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [st-logic-foundations]
 
   - id: st-prob2
@@ -237,7 +237,7 @@ courses:
   - id: st-numerical-analysis-foundations
     name: مبانی آنالیز عددی
     credits: 4
-    category: elective
+    category: specialized
     prerequisites: [st-analysis1]
 
   - id: st-linear-opt1
@@ -261,7 +261,7 @@ courses:
   - id: st-sampling2
     name: روش‌های نمونه‌گیری ۲
     credits: 3
-    category: elective
+    category: specialized
     prerequisites: [st-sampling1]
 
   - id: st-experiment-design2
@@ -309,7 +309,7 @@ courses:
   - id: st-economics
     name: مبانی علم اقتصاد
     credits: 3
-    category: elective
+    category: base
 
   - id: st-db-fundamentals
     name: مبانی و کاربردهای پایگاه داده‌ها
@@ -461,25 +461,25 @@ courses:
   - id: st-topics
     name: مباحثی در آمار و کاربردها
     credits: 3
-    category: elective
+    category: special
 
   - id: st-multivariate-analysis
     name: تحلیل چند جمعیتی آماری
     credits: 3
-    category: elective
+    category: specialized
     prerequisites: [st-math-stat2]
 
   # ─── Special Courses (خاص) ───
   - id: st-physics-lab1
     name: آزمایشگاه فیزیک عمومی ۱
     credits: 1
-    category: special
+    category: elective
     corequisites: [st-physics1]
 
   - id: st-physics-lab2
     name: آزمایشگاه فیزیک عمومی ۲
     credits: 1
-    category: special
+    category: elective
     corequisites: [st-physics2]
 
   - id: st-project

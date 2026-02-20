@@ -28,7 +28,7 @@ courses:
   - id: ma-prob1
     name: احتمال ۱
     credits: 4
-    category: base
+    category: specialized
 
   - id: ma-combinatorics-foundations
     name: مبانی ترکیبیات
@@ -44,7 +44,7 @@ courses:
   - id: ma-analysis1
     name: آنالیز ریاضی ۱
     credits: 4
-    category: base
+    category: specialized
     prerequisites: [ma-math-foundations, ma-calc1]
 
   - id: ma-physics2
@@ -56,25 +56,25 @@ courses:
   - id: ma-linear-algebra
     name: جبرخطی
     credits: 4
-    category: base
+    category: specialized
     prerequisites: [ma-math-foundations]
 
   - id: ma-diff-eq
     name: معادلات دیفرانسیل
     credits: 3
-    category: base
+    category: specialized
     prerequisites: [ma-calc1]
 
   - id: ma-adv-programming
     name: برنامه‌سازی پیشرفته
     credits: 4
-    category: base
+    category: elective
     prerequisites: [ma-intro-cs]
 
   - id: ma-stat-methods
     name: روش‌های آماری
     credits: 3
-    category: base
+    category: elective
     prerequisites: [ma-prob1]
 
   # ─── Specialized Courses (تخصصی) — CS track ───
@@ -111,7 +111,7 @@ courses:
   - id: ma-scientific-computing
     name: محاسبات علمی
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [ma-linear-algebra]
 
   - id: ma-ai
@@ -135,7 +135,7 @@ courses:
   - id: ma-scientific-writing
     name: نگارش علمی
     credits: 3
-    category: specialized
+    category: elective
 
   - id: ma-computation-theory-foundations
     name: مبانی نظریه محاسبه
@@ -407,12 +407,12 @@ courses:
   - id: ma-game-theory1
     name: بازی‌های راهبردی ۱
     credits: 4
-    category: elective
+    category: special
 
   - id: ma-game-theory2
     name: بازی‌های راهبردی ۲
     credits: 4
-    category: elective
+    category: special
     prerequisites: [ma-game-theory1]
 
   - id: ma-ode-theory
@@ -515,7 +515,7 @@ courses:
   - id: ma-geometry-foundations
     name: مبانی هندسه
     credits: 2
-    category: special
+    category: elective
     prerequisites: [ma-math-foundations]
 
   - id: ma-problem-solving
@@ -536,19 +536,19 @@ courses:
   - id: ma-math-lab
     name: آزمایشگاه ریاضی
     credits: 2
-    category: special
+    category: specialized
     prerequisites: [ma-intro-cs]
 
   - id: ma-physics-lab1
     name: آزمایشگاه فیزیک عمومی ۱
     credits: 1
-    category: special
+    category: elective
     corequisites: [ma-physics1]
 
   - id: ma-physics-lab2
     name: آزمایشگاه فیزیک عمومی ۲
     credits: 1
-    category: special
+    category: elective
     corequisites: [ma-physics2]
 
   - id: ma-topics

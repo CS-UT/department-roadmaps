@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Mindmap from './components/Mindmap';
 import { departments, departmentList } from './data';
 import { useCompletedCourses } from './hooks/useCompletedCourses';
@@ -29,10 +29,24 @@ function useDarkMode() {
 function App() {
   const [active, setActive] = useState<DepartmentId>('cs');
   const [dark, toggleDark] = useDarkMode();
+  const [showContribute, setShowContribute] = useState(false);
+  const contributeRef = useRef<HTMLDivElement>(null);
 
   const currentDept = departments[active];
 
   const [completedIds, toggleCompleted, clearAllCompleted] = useCompletedCourses(active);
+
+  // Close contribute popover on outside click
+  useEffect(() => {
+    if (!showContribute) return;
+    const handler = (e: MouseEvent) => {
+      if (contributeRef.current && !contributeRef.current.contains(e.target as Node)) {
+        setShowContribute(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showContribute]);
 
   // Auto-start guided tour on first visit
   useEffect(() => {
@@ -77,6 +91,51 @@ function App() {
                 </button>
               ))}
             </nav>
+            <div className="relative shrink-0" ref={contributeRef}>
+              <button
+                onClick={() => setShowContribute((v) => !v)}
+                className="px-2.5 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer whitespace-nowrap border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-primary-400 hover:text-primary-500 dark:hover:border-primary-500 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
+                title="افزودن نقشه راه گروه جدید"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              </button>
+              {showContribute && (
+                <div className="absolute top-full mt-2 right-0 w-72 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 z-50 text-sm animate-fade-in">
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <div className="w-7 h-7 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </div>
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100">نقشه راه گروهتان را اضافه کنید</h3>
+                  </div>
+                  <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
+                    فقط کافیست یک فایل YAML بسازید و Pull Request بزنید — نیازی به تغییر کد نیست!
+                  </p>
+                  <div className="space-y-1.5 text-xs text-gray-500 dark:text-gray-400 mb-3">
+                    <div className="flex items-start gap-2">
+                      <span className="text-primary-500 font-bold mt-px">۱</span>
+                      <span>مخزن را Fork کنید</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-primary-500 font-bold mt-px">۲</span>
+                      <span>یک فایل <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded text-[11px]">.yaml</code> در <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded text-[11px]">src/data/roadmaps/</code> بسازید</span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <span className="text-primary-500 font-bold mt-px">۳</span>
+                      <span>Pull Request ارسال کنید</span>
+                    </div>
+                  </div>
+                  <a
+                    href="https://github.com/CS-UT/department-roadmaps/blob/main/CONTRIBUTING.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-xs font-medium transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    راهنمای مشارکت
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Left side: Credits + actions */}

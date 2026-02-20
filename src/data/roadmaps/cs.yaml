@@ -140,7 +140,7 @@ courses:
   - id: cs-scientific-writing
     name: نگارش علمی
     credits: 3
-    category: specialized
+    category: special
 
   - id: cs-computation-theory-foundations
     name: مبانی نظریه محاسبه
@@ -337,13 +337,13 @@ courses:
   - id: cs-compiler
     name: کامپایلر
     credits: 3
-    category: elective
+    category: specialized
     prerequisites: [cs-computation-theory-foundations]
 
   - id: cs-computation-theory
     name: نظریه محاسبه
     credits: 3
-    category: elective
+    category: specialized
     prerequisites: [cs-computation-theory-foundations]
 
   - id: cs-bioinformatics
