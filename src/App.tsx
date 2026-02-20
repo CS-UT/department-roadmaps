@@ -79,13 +79,13 @@ function App() {
       </header>
 
       {/* Department Tabs */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 overflow-x-auto">
         <div className="max-w-[1600px] mx-auto px-4 py-2 flex gap-2">
           {departmentList.map((dept) => (
             <button
               key={dept.id}
               onClick={() => setActive(dept.id)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
                 active === dept.id
                   ? 'bg-primary-600 text-white shadow-sm'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'

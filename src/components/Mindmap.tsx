@@ -15,8 +15,10 @@ import '@xyflow/react/dist/style.css';
 import CourseNode from './CourseNode';
 import Legend from './Legend';
 import { buildGraph } from './layoutEngine';
-import type { DepartmentData } from '../data/types';
+import type { DepartmentData, CourseCategory } from '../data/types';
 import type { CourseNodeData } from './CourseNode';
+
+const ALL_CATEGORIES: CourseCategory[] = ['base', 'specialized', 'elective', 'special'];
 
 const nodeTypes = {
   course: CourseNode,
@@ -54,25 +56,57 @@ export default function Mindmap({ department }: MindmapProps) {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [activeCategories, setActiveCategories] = useState<Set<CourseCategory>>(
+    () => new Set(ALL_CATEGORIES),
+  );
+
+  // Build a category lookup from department courses
+  const categoryMap = useMemo(() => {
+    const m = new Map<string, CourseCategory>();
+    for (const c of department.courses) m.set(c.id, c.category);
+    return m;
+  }, [department]);
 
   // Reset when department changes
   useMemo(() => {
     setNodes(initialNodes);
     setEdges(initialEdges);
     setSelectedId(null);
+    setActiveCategories(new Set(ALL_CATEGORIES));
   }, [initialNodes, initialEdges, setNodes, setEdges]);
 
   const highlightConnections = useCallback(
     (nodeId: string | null) => {
       if (!nodeId) {
-        // Reset all
+        // Reset — but respect active category filter
         setNodes((nds) =>
-          nds.map((n) => ({
-            ...n,
-            data: { ...n.data, highlighted: false, dimmed: false },
-          })),
+          nds.map((n) => {
+            const cat = categoryMap.get(n.id);
+            const filtered = cat ? !activeCategories.has(cat) : false;
+            return {
+              ...n,
+              data: { ...n.data, highlighted: false, dimmed: filtered },
+            };
+          }),
         );
-        setEdges(initialEdges);
+        setEdges((eds) =>
+          eds.map((e) => {
+            const orig = initialEdges.find((ie) => ie.id === e.id);
+            const srcCat = categoryMap.get(e.source);
+            const tgtCat = categoryMap.get(e.target);
+            const bothVisible =
+              (srcCat ? activeCategories.has(srcCat) : true) &&
+              (tgtCat ? activeCategories.has(tgtCat) : true);
+            return {
+              ...e,
+              style: {
+                ...(orig?.style ?? e.style),
+                opacity: bothVisible ? (orig?.style?.opacity ?? 0.25) : 0.03,
+              },
+              animated: false,
+            };
+          }),
+        );
         return;
       }
 
@@ -103,32 +137,94 @@ export default function Mindmap({ department }: MindmapProps) {
       const connectedIds = new Set([nodeId, ...allPrereqs, ...allDeps]);
 
       setNodes((nds) =>
-        nds.map((n) => ({
-          ...n,
-          data: {
-            ...n.data,
-            highlighted: n.id === nodeId,
-            dimmed: !connectedIds.has(n.id),
-          },
-        })),
+        nds.map((n) => {
+          const cat = categoryMap.get(n.id);
+          const filtered = cat ? !activeCategories.has(cat) : false;
+          return {
+            ...n,
+            data: {
+              ...n.data,
+              highlighted: n.id === nodeId,
+              dimmed: filtered || !connectedIds.has(n.id),
+            },
+          };
+        }),
       );
 
       setEdges((eds) =>
         eds.map((e) => {
           const isConnected = connectedIds.has(e.source) && connectedIds.has(e.target);
+          const srcCat = categoryMap.get(e.source);
+          const tgtCat = categoryMap.get(e.target);
+          const bothVisible =
+            (srcCat ? activeCategories.has(srcCat) : true) &&
+            (tgtCat ? activeCategories.has(tgtCat) : true);
           return {
             ...e,
             style: {
               ...e.style,
-              opacity: isConnected ? 1 : 0.06,
-              strokeWidth: isConnected ? 2.5 : 1,
+              opacity: isConnected && bothVisible ? 1 : 0.06,
+              strokeWidth: isConnected && bothVisible ? 2.5 : 1,
             },
-            animated: isConnected && (allPrereqs.has(e.source) || e.source === nodeId),
+            animated: isConnected && bothVisible && (allPrereqs.has(e.source) || e.source === nodeId),
           };
         }),
       );
     },
-    [coursePrereqs, courseDependents, setNodes, setEdges, initialEdges],
+    [coursePrereqs, courseDependents, setNodes, setEdges, initialEdges, categoryMap, activeCategories],
+  );
+
+  const applyFilter = useCallback(
+    (cats: Set<CourseCategory>) => {
+      setNodes((nds) =>
+        nds.map((n) => {
+          const cat = categoryMap.get(n.id);
+          const visible = cat ? cats.has(cat) : true;
+          return {
+            ...n,
+            data: { ...n.data, dimmed: !visible },
+            hidden: false,
+          };
+        }),
+      );
+      setEdges((eds) =>
+        eds.map((e) => {
+          const srcCat = categoryMap.get(e.source);
+          const tgtCat = categoryMap.get(e.target);
+          const visible =
+            (srcCat ? cats.has(srcCat) : true) && (tgtCat ? cats.has(tgtCat) : true);
+          return {
+            ...e,
+            style: {
+              ...e.style,
+              opacity: visible ? (e.style?.opacity ?? 0.25) : 0.03,
+            },
+          };
+        }),
+      );
+    },
+    [categoryMap, setNodes, setEdges],
+  );
+
+  const handleCategoryToggle = useCallback(
+    (category: CourseCategory) => {
+      setActiveCategories((prev) => {
+        const next = new Set(prev);
+        if (next.has(category)) {
+          // Don't allow deactivating all categories
+          if (next.size > 1) next.delete(category);
+        } else {
+          next.add(category);
+        }
+        // Clear selection when filtering
+        setSelectedId(null);
+        highlightConnections(null);
+        // Apply filter after a tick to let highlight reset
+        setTimeout(() => applyFilter(next), 0);
+        return next;
+      });
+    },
+    [applyFilter, highlightConnections],
   );
 
   const onNodeClick: NodeMouseHandler = useCallback(
@@ -174,6 +270,8 @@ export default function Mindmap({ department }: MindmapProps) {
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
         nodeTypes={nodeTypes}
+        nodesDraggable={false}
+        nodesConnectable={false}
         fitView
         fitViewOptions={{ padding: 0.08, maxZoom: 1 }}
         minZoom={0.2}
@@ -190,6 +288,7 @@ export default function Mindmap({ department }: MindmapProps) {
         />
         <Controls
           position="bottom-left"
+          showInteractive={false}
           className="!bg-white dark:!bg-gray-800 !border-gray-200 dark:!border-gray-700 !rounded-lg !shadow-lg [&_button]:!bg-white [&_button]:dark:!bg-gray-800 [&_button]:!border-gray-200 [&_button]:dark:!border-gray-700 [&_button]:!rounded [&_button_svg]:!fill-gray-600 [&_button_svg]:dark:!fill-gray-300"
         />
         <MiniMap
@@ -209,19 +308,19 @@ export default function Mindmap({ department }: MindmapProps) {
                 return '#9ca3af';
             }
           }}
-          className="!bg-white/80 dark:!bg-gray-800/80 !border-gray-200 dark:!border-gray-700 !rounded-lg !shadow-lg"
+          className="!bg-white/80 dark:!bg-gray-800/80 !border-gray-200 dark:!border-gray-700 !rounded-lg !shadow-lg hidden sm:block"
           maskColor="rgba(0,0,0,0.08)"
         />
       </ReactFlow>
 
-      {/* Legend - top right */}
-      <div className="absolute top-3 right-3 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md border border-gray-200 dark:border-gray-700 z-10">
-        <Legend />
+      {/* Legend / filter — top right, horizontally scrollable on mobile */}
+      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 left-12 sm:left-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shadow-md border border-gray-200 dark:border-gray-700 z-10 overflow-x-auto">
+        <Legend activeCategories={activeCategories} onToggle={handleCategoryToggle} />
       </div>
 
-      {/* Course detail panel */}
+      {/* Course detail panel — bottom sheet on mobile, top-left card on desktop */}
       {selectedCourse && (
-        <div className="absolute top-3 left-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl px-4 py-3 shadow-xl border border-gray-200 dark:border-gray-700 z-10 max-w-[280px]">
+        <div className="absolute inset-x-0 bottom-0 sm:inset-x-auto sm:bottom-auto sm:top-3 sm:left-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-t-xl sm:rounded-xl px-4 py-3 shadow-xl border border-gray-200 dark:border-gray-700 z-10 sm:max-w-[280px] max-h-[45vh] overflow-y-auto">
           <div className="flex items-center justify-between gap-2 mb-2">
             <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100">
               {selectedCourse.name}
@@ -231,7 +330,7 @@ export default function Mindmap({ department }: MindmapProps) {
                 setSelectedId(null);
                 highlightConnections(null);
               }}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-lg leading-none cursor-pointer"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-lg leading-none cursor-pointer p-1"
             >
               &times;
             </button>
