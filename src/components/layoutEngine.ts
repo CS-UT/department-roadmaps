@@ -181,6 +181,7 @@ export function buildGraph(dept: DepartmentData): { nodes: Node[]; edges: Edge[]
               stroke: isElective ? '#f59e0b' : '#94a3b8',
               strokeWidth: isElective ? 0.8 : 1.2,
               opacity: isElective ? 0.18 : 0.25,
+              pointerEvents: 'none' as const,
             },
           });
         }
@@ -195,7 +196,7 @@ export function buildGraph(dept: DepartmentData): { nodes: Node[]; edges: Edge[]
             target: course.id,
             type: 'default',
             animated: false,
-            style: { stroke: '#22c55e', strokeWidth: 1, strokeDasharray: '5 5', opacity: 0.25 },
+            style: { stroke: '#22c55e', strokeWidth: 1, strokeDasharray: '5 5', opacity: 0.25, pointerEvents: 'none' as const },
           });
         }
       }

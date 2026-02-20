@@ -400,6 +400,8 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
         nodeTypes={nodeTypes}
         nodesDraggable={false}
         nodesConnectable={false}
+        edgesFocusable={false}
+        edgesReconnectable={false}
         fitView
         fitViewOptions={{ padding: 0.08, maxZoom: 1 }}
         minZoom={0.2}
