@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import {
   ReactFlow,
   Background,
@@ -14,7 +14,6 @@ import CourseNode from './CourseNode';
 import Legend from './Legend';
 import { buildGraph } from './layoutEngine';
 import type { DepartmentData, CourseCategory } from '../data/types';
-import { useCompletedCourses } from '../hooks/useCompletedCourses';
 
 const ALL_CATEGORIES: CourseCategory[] = ['base', 'specialized', 'elective', 'special'];
 
@@ -24,9 +23,11 @@ const nodeTypes = {
 
 interface MindmapProps {
   department: DepartmentData;
+  completedIds: Set<string>;
+  toggleCompleted: (courseId: string) => void;
 }
 
-export default function Mindmap({ department }: MindmapProps) {
+export default function Mindmap({ department, completedIds, toggleCompleted }: MindmapProps) {
   const { initialNodes, initialEdges, coursePrereqs, courseDependents } = useMemo(() => {
     const { nodes, edges } = buildGraph(department);
 
@@ -58,7 +59,9 @@ export default function Mindmap({ department }: MindmapProps) {
     () => new Set(ALL_CATEGORIES),
   );
 
-  const [completedIds, toggleCompleted, clearAllCompleted] = useCompletedCourses(department.id);
+  const [showAvailable, setShowAvailable] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Build a category lookup from department courses
   const categoryMap = useMemo(() => {
@@ -67,15 +70,17 @@ export default function Mindmap({ department }: MindmapProps) {
     return m;
   }, [department]);
 
-  // Compute completed/total credits
-  const { completedCredits, totalCredits } = useMemo(() => {
-    let completed = 0;
-    let total = 0;
-    for (const c of department.courses) {
-      total += c.credits;
-      if (completedIds.has(c.id)) completed += c.credits;
+  // Compute available course IDs: not completed & all prereqs completed
+  const availableIds = useMemo(() => {
+    const available = new Set<string>();
+    for (const course of department.courses) {
+      if (completedIds.has(course.id)) continue;
+      const prereqs = course.prerequisites ?? [];
+      if (prereqs.every((pid) => completedIds.has(pid))) {
+        available.add(course.id);
+      }
     }
-    return { completedCredits: completed, totalCredits: total };
+    return available;
   }, [department.courses, completedIds]);
 
   // Reset when department changes
@@ -84,29 +89,75 @@ export default function Mindmap({ department }: MindmapProps) {
     setEdges(initialEdges);
     setSelectedId(null);
     setActiveCategories(new Set(ALL_CATEGORIES));
+    setShowAvailable(false);
   }, [initialNodes, initialEdges, setNodes, setEdges]);
 
-  // Sync completedIds into node data (decoupled from highlight/filter)
+  // Sync completedIds + showAvailable into node data
   useEffect(() => {
     setNodes((nds) =>
-      nds.map((n) => ({
-        ...n,
-        data: { ...n.data, completed: completedIds.has(n.id) },
-      })),
+      nds.map((n) => {
+        const cat = categoryMap.get(n.id);
+        const filteredByCategory = cat ? !activeCategories.has(cat) : false;
+
+        let dimmed = filteredByCategory;
+        if (!filteredByCategory && showAvailable) {
+          // In available view: only available courses stay colored
+          dimmed = !availableIds.has(n.id);
+        }
+
+        return {
+          ...n,
+          data: {
+            ...n.data,
+            completed: completedIds.has(n.id),
+            dimmed,
+          },
+        };
+      }),
     );
-  }, [completedIds, setNodes]);
+  }, [completedIds, showAvailable, availableIds, activeCategories, categoryMap, setNodes]);
+
+  // Also update edges when showAvailable changes
+  useEffect(() => {
+    if (!showAvailable) return;
+    setEdges((eds) =>
+      eds.map((e) => {
+        const orig = initialEdges.find((ie) => ie.id === e.id);
+        const srcAvailable = availableIds.has(e.source);
+        const tgtAvailable = availableIds.has(e.target);
+        const bothAvailable = srcAvailable && tgtAvailable;
+        const srcCat = categoryMap.get(e.source);
+        const tgtCat = categoryMap.get(e.target);
+        const bothVisible =
+          (srcCat ? activeCategories.has(srcCat) : true) &&
+          (tgtCat ? activeCategories.has(tgtCat) : true);
+        return {
+          ...e,
+          style: {
+            ...(orig?.style ?? e.style),
+            opacity: bothAvailable && bothVisible ? (orig?.style?.opacity ?? 0.25) : 0.03,
+          },
+          animated: false,
+        };
+      }),
+    );
+  }, [showAvailable, availableIds, activeCategories, categoryMap, initialEdges, setEdges]);
 
   const highlightConnections = useCallback(
     (nodeId: string | null) => {
       if (!nodeId) {
-        // Reset — but respect active category filter
+        // Reset — respect active category filter + available view
         setNodes((nds) =>
           nds.map((n) => {
             const cat = categoryMap.get(n.id);
-            const filtered = cat ? !activeCategories.has(cat) : false;
+            const filteredByCategory = cat ? !activeCategories.has(cat) : false;
+            let dimmed = filteredByCategory;
+            if (!filteredByCategory && showAvailable) {
+              dimmed = !availableIds.has(n.id);
+            }
             return {
               ...n,
-              data: { ...n.data, highlighted: false, dimmed: filtered },
+              data: { ...n.data, highlighted: false, dimmed },
             };
           }),
         );
@@ -115,14 +166,18 @@ export default function Mindmap({ department }: MindmapProps) {
             const orig = initialEdges.find((ie) => ie.id === e.id);
             const srcCat = categoryMap.get(e.source);
             const tgtCat = categoryMap.get(e.target);
-            const bothVisible =
+            const bothCatVisible =
               (srcCat ? activeCategories.has(srcCat) : true) &&
               (tgtCat ? activeCategories.has(tgtCat) : true);
+            let visible = bothCatVisible;
+            if (visible && showAvailable) {
+              visible = availableIds.has(e.source) && availableIds.has(e.target);
+            }
             return {
               ...e,
               style: {
                 ...(orig?.style ?? e.style),
-                opacity: bothVisible ? (orig?.style?.opacity ?? 0.25) : 0.03,
+                opacity: visible ? (orig?.style?.opacity ?? 0.25) : 0.03,
               },
               animated: false,
             };
@@ -160,13 +215,17 @@ export default function Mindmap({ department }: MindmapProps) {
       setNodes((nds) =>
         nds.map((n) => {
           const cat = categoryMap.get(n.id);
-          const filtered = cat ? !activeCategories.has(cat) : false;
+          const filteredByCategory = cat ? !activeCategories.has(cat) : false;
+          let dimmed = filteredByCategory || !connectedIds.has(n.id);
+          if (!filteredByCategory && !dimmed && showAvailable) {
+            dimmed = !availableIds.has(n.id) && !connectedIds.has(n.id);
+          }
           return {
             ...n,
             data: {
               ...n.data,
               highlighted: n.id === nodeId,
-              dimmed: filtered || !connectedIds.has(n.id),
+              dimmed: filteredByCategory || !connectedIds.has(n.id),
             },
           };
         }),
@@ -192,7 +251,7 @@ export default function Mindmap({ department }: MindmapProps) {
         }),
       );
     },
-    [coursePrereqs, courseDependents, setNodes, setEdges, initialEdges, categoryMap, activeCategories],
+    [coursePrereqs, courseDependents, setNodes, setEdges, initialEdges, categoryMap, activeCategories, showAvailable, availableIds],
   );
 
   const applyFilter = useCallback(
@@ -200,10 +259,14 @@ export default function Mindmap({ department }: MindmapProps) {
       setNodes((nds) =>
         nds.map((n) => {
           const cat = categoryMap.get(n.id);
-          const visible = cat ? cats.has(cat) : true;
+          const catVisible = cat ? cats.has(cat) : true;
+          let dimmed = !catVisible;
+          if (catVisible && showAvailable) {
+            dimmed = !availableIds.has(n.id);
+          }
           return {
             ...n,
-            data: { ...n.data, dimmed: !visible },
+            data: { ...n.data, dimmed },
             hidden: false,
           };
         }),
@@ -212,8 +275,12 @@ export default function Mindmap({ department }: MindmapProps) {
         eds.map((e) => {
           const srcCat = categoryMap.get(e.source);
           const tgtCat = categoryMap.get(e.target);
-          const visible =
+          const bothCatVisible =
             (srcCat ? cats.has(srcCat) : true) && (tgtCat ? cats.has(tgtCat) : true);
+          let visible = bothCatVisible;
+          if (visible && showAvailable) {
+            visible = availableIds.has(e.source) && availableIds.has(e.target);
+          }
           return {
             ...e,
             style: {
@@ -224,7 +291,7 @@ export default function Mindmap({ department }: MindmapProps) {
         }),
       );
     },
-    [categoryMap, setNodes, setEdges],
+    [categoryMap, setNodes, setEdges, showAvailable, availableIds],
   );
 
   const handleCategoryToggle = useCallback(
@@ -247,6 +314,33 @@ export default function Mindmap({ department }: MindmapProps) {
     },
     [applyFilter, highlightConnections],
   );
+
+  const handleToggleAvailable = useCallback(() => {
+    setShowAvailable((prev) => {
+      const next = !prev;
+      if (next) {
+        // First-time toast
+        try {
+          if (!localStorage.getItem('roadmap-available-hint-seen')) {
+            localStorage.setItem('roadmap-available-hint-seen', 'true');
+            setShowToast(true);
+            if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+            toastTimerRef.current = setTimeout(() => setShowToast(false), 6000);
+          }
+        } catch { /* ignore */ }
+      }
+      return next;
+    });
+    // Clear selection
+    setSelectedId(null);
+  }, []);
+
+  // Clean up toast timer
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    };
+  }, []);
 
   const onNodeClick: NodeMouseHandler = useCallback(
     (_event, node) => {
@@ -276,6 +370,17 @@ export default function Mindmap({ department }: MindmapProps) {
         .map((did) => department.courses.find((c) => c.id === did)?.name)
         .filter(Boolean) as string[]
     : [];
+
+  // Compute missing prereqs for the selected course (for available view)
+  const missingPrereqs = useMemo(() => {
+    if (!showAvailable || !selectedCourse || completedIds.has(selectedCourse.id)) return null;
+    const prereqs = selectedCourse.prerequisites ?? [];
+    const missing = prereqs.filter((pid) => !completedIds.has(pid));
+    if (missing.length === 0) return null;
+    return missing
+      .map((pid) => department.courses.find((c) => c.id === pid)?.name)
+      .filter(Boolean) as string[];
+  }, [showAvailable, selectedCourse, completedIds, department.courses]);
 
   return (
     <div
@@ -319,16 +424,21 @@ export default function Mindmap({ department }: MindmapProps) {
         <Legend
           activeCategories={activeCategories}
           onToggle={handleCategoryToggle}
-          completedCredits={completedCredits}
-          totalCredits={totalCredits}
-          hasCompleted={completedIds.size > 0}
-          onClearCompleted={() => {
-            if (window.confirm('آیا از پاک کردن تمام دروس گذرانده اطمینان دارید؟')) {
-              clearAllCompleted();
-            }
-          }}
+          showAvailable={showAvailable}
+          onToggleAvailable={handleToggleAvailable}
         />
       </div>
+
+      {/* First-time toast */}
+      {showToast && (
+        <div
+          className="absolute top-14 sm:top-16 left-1/2 -translate-x-1/2 z-20 bg-green-50 dark:bg-green-900/60 border border-green-200 dark:border-green-700 text-green-800 dark:text-green-200 text-xs sm:text-sm px-4 py-2.5 rounded-lg shadow-lg backdrop-blur-sm max-w-[90vw] sm:max-w-md text-center animate-fade-in"
+          onClick={() => setShowToast(false)}
+          role="status"
+        >
+          دروس رنگی قابل اخذ هستند. دروس خاکستری پیشنیاز ناقص دارند یا قبلا گذرانده شده‌اند.
+        </div>
+      )}
 
       {/* Course detail panel — bottom sheet on mobile, top-left card on desktop */}
       {selectedCourse && (
@@ -360,10 +470,24 @@ export default function Mindmap({ department }: MindmapProps) {
               <div>
                 <span className="font-semibold text-gray-700 dark:text-gray-300">پیشنیازها: </span>
                 <ul className="mt-0.5 mr-3 list-disc">
-                  {selectedPrereqNames.map((name) => (
-                    <li key={name}>{name}</li>
-                  ))}
+                  {selectedCourse.prerequisites!.map((pid) => {
+                    const name = department.courses.find((c) => c.id === pid)?.name;
+                    if (!name) return null;
+                    const isMissing = missingPrereqs?.includes(name);
+                    return (
+                      <li key={pid} className={isMissing ? 'text-red-500 dark:text-red-400 font-semibold' : ''}>
+                        {name}
+                        {isMissing && <span className="mr-1 text-[10px]">✗</span>}
+                      </li>
+                    );
+                  })}
                 </ul>
+              </div>
+            )}
+            {/* Missing prereqs notice in available view */}
+            {missingPrereqs && missingPrereqs.length > 0 && (
+              <div className="mt-1.5 px-2 py-1.5 rounded-md bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-[11px]">
+                <span className="font-bold">پیشنیازهای ناقص</span>
               </div>
             )}
             {selectedDependentNames.length > 0 && (

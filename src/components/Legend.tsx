@@ -15,13 +15,11 @@ const edgeItems = [
 interface LegendProps {
   activeCategories: Set<CourseCategory>;
   onToggle: (category: CourseCategory) => void;
-  completedCredits: number;
-  totalCredits: number;
-  onClearCompleted: () => void;
-  hasCompleted: boolean;
+  showAvailable: boolean;
+  onToggleAvailable: () => void;
 }
 
-export default function Legend({ activeCategories, onToggle, completedCredits, totalCredits, onClearCompleted, hasCompleted }: LegendProps) {
+export default function Legend({ activeCategories, onToggle, showAvailable, onToggleAvailable }: LegendProps) {
   return (
     <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
       {items.map((item) => {
@@ -49,18 +47,28 @@ export default function Legend({ activeCategories, onToggle, completedCredits, t
         </span>
       ))}
       <span className="mx-0.5 text-gray-300 dark:text-gray-600">|</span>
-      <span className="flex items-center gap-1 text-green-600 dark:text-green-400 font-semibold">
-        <span>✓</span>
-        <span>{completedCredits} از {totalCredits} واحد</span>
-      </span>
-      {hasCompleted && (
-        <button
-          onClick={onClearCompleted}
-          className="p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/30 text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors cursor-pointer"
-          title="پاک کردن همه"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-        </button>
+      {/* Eye toggle: available courses view */}
+      <button
+        onClick={onToggleAvailable}
+        className={`flex items-center gap-1 px-2 py-1 rounded-full transition-all cursor-pointer select-none ${
+          showAvailable
+            ? 'ring-2 ring-green-400 bg-white dark:bg-gray-700 text-green-700 dark:text-green-400 font-semibold'
+            : 'bg-gray-100 dark:bg-gray-700/50 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
+        }`}
+        title="نمایش دروس قابل اخذ"
+      >
+        {showAvailable ? (
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        )}
+        <span className="hidden sm:inline">قابل اخذ</span>
+      </button>
+      {/* Hint text when available view is active */}
+      {showAvailable && (
+        <span className="text-green-600 dark:text-green-400 text-[10px] font-medium hidden sm:inline">
+          حالت دروس قابل اخذ فعال است
+        </span>
       )}
     </div>
   );

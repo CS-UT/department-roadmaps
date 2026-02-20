@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Mindmap from './components/Mindmap';
 import { departments, departmentList } from './data';
+import { useCompletedCourses } from './hooks/useCompletedCourses';
 
 type DepartmentId = (typeof departmentList)[number]['id'];
 
@@ -30,6 +31,13 @@ function App() {
   const currentDept = departments[active];
   const currentInfo = departmentList.find((d) => d.id === active)!;
 
+  const [completedIds, toggleCompleted, clearAllCompleted] = useCompletedCourses(active);
+
+  const completedCredits = currentDept.courses.reduce(
+    (sum, c) => sum + (completedIds.has(c.id) ? c.credits : 0),
+    0,
+  );
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors flex flex-col">
       {/* Header */}
@@ -39,6 +47,24 @@ function App() {
             نقشه راه دانشکده ریاضی، آمار و علوم کامپیوتر
           </h1>
           <div className="flex items-center gap-2 shrink-0">
+            {/* Completed credits badge */}
+            {completedIds.size > 0 && (
+              <span className="flex items-center gap-1.5 text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-full px-2.5 py-1">
+                <span>✓</span>
+                <span>{completedCredits} واحد گذرانده</span>
+                <button
+                  onClick={() => {
+                    if (window.confirm('آیا از پاک کردن تمام دروس گذرانده اطمینان دارید؟')) {
+                      clearAllCompleted();
+                    }
+                  }}
+                  className="mr-0.5 p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/40 text-green-600 hover:text-red-500 dark:hover:text-red-400 transition-colors cursor-pointer"
+                  title="پاک کردن همه"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </span>
+            )}
             <a
               href={currentInfo.file}
               download
@@ -99,7 +125,11 @@ function App() {
 
       {/* Mindmap */}
       <div className="flex-1">
-        <Mindmap department={currentDept} />
+        <Mindmap
+          department={currentDept}
+          completedIds={completedIds}
+          toggleCompleted={toggleCompleted}
+        />
       </div>
     </div>
   );
