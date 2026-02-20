@@ -1,12 +1,8 @@
 import { useState, useEffect } from 'react';
+import Mindmap from './components/Mindmap';
+import { departments, departmentList } from './data';
 
-const departments = [
-  { id: 'cs', label: 'علوم کامپیوتر', file: '/CS-UT-V3.pdf' },
-  { id: 'math', label: 'ریاضی', file: '/Math-UT-V4.pdf' },
-  { id: 'stats', label: 'آمار', file: '/Statistic-UT-V1.pdf' },
-] as const;
-
-type DepartmentId = (typeof departments)[number]['id'];
+type DepartmentId = (typeof departmentList)[number]['id'];
 
 function useDarkMode() {
   const [dark, setDark] = useState(() => {
@@ -31,22 +27,32 @@ function App() {
   const [active, setActive] = useState<DepartmentId>('cs');
   const [dark, toggleDark] = useDarkMode();
 
-  const current = departments.find((d) => d.id === active)!;
+  const currentDept = departments[active];
+  const currentInfo = departmentList.find((d) => d.id === active)!;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors flex flex-col">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 transition-colors">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+        <div className="max-w-[1600px] mx-auto px-4 py-3 flex items-center justify-between gap-3">
           <h1 className="text-sm sm:text-base font-bold truncate">
             نقشه راه دانشکده ریاضی، آمار و علوم کامپیوتر
           </h1>
           <div className="flex items-center gap-2 shrink-0">
             <a
+              href={currentInfo.file}
+              download
+              className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors flex items-center gap-1"
+              title="دانلود PDF"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              <span className="hidden sm:inline">PDF</span>
+            </a>
+            <a
               href="https://plan.csut.ir"
               className="text-xs sm:text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium transition-colors"
             >
-              برنامه‌ریزی واحد
+              برنامه‌ریزی انتخاب واحد
             </a>
             <a
               href="https://github.com/CS-UT/department-roadmaps"
@@ -72,71 +78,29 @@ function App() {
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-4 py-6">
-        {/* Department Tabs */}
-        <div className="flex gap-2 mb-6">
-          {departments.map((dept) => (
+      {/* Department Tabs */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-[1600px] mx-auto px-4 py-2 flex gap-2">
+          {departmentList.map((dept) => (
             <button
               key={dept.id}
               onClick={() => setActive(dept.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors cursor-pointer ${
+              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
                 active === dept.id
                   ? 'bg-primary-600 text-white shadow-sm'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
               }`}
             >
               {dept.label}
             </button>
           ))}
         </div>
-
-        {/* PDF Viewer — Desktop */}
-        <div className="hidden md:block bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-          <iframe
-            key={current.id}
-            src={current.file}
-            className="w-full border-0"
-            style={{ height: '80vh' }}
-            title={`نقشه راه ${current.label}`}
-          />
-        </div>
-
-        {/* PDF Viewer — Mobile */}
-        <div className="md:hidden bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 text-center">
-          <div className="text-gray-500 dark:text-gray-400 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="mx-auto mb-3 text-primary-500"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-            <p className="text-sm">نقشه راه {current.label}</p>
-          </div>
-          <a
-            href={current.file}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-primary-600 text-white px-5 py-2.5 rounded-lg font-medium text-sm hover:bg-primary-700 transition-colors"
-          >
-            مشاهده نقشه راه
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-          </a>
-        </div>
-
-        {/* Download Button */}
-        <div className="mt-4 flex justify-center">
-          <a
-            href={current.file}
-            download
-            className="inline-flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 font-medium transition-colors"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            دانلود فایل PDF
-          </a>
-        </div>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-gray-700 mt-12">
-        <div className="max-w-5xl mx-auto px-4 py-4 text-center text-xs text-gray-400 dark:text-gray-500">
-          دانشکده ریاضی، آمار و علوم کامپیوتر — دانشگاه تهران
-        </div>
-      </footer>
+      {/* Mindmap */}
+      <div className="flex-1">
+        <Mindmap department={currentDept} />
+      </div>
     </div>
   );
 }
