@@ -38,10 +38,10 @@ const categoryStyles: Record<CourseCategory, { bg: string; border: string; text:
     badge: 'bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200',
   },
   special: {
-    bg: 'bg-emerald-50 dark:bg-emerald-950/60',
-    border: 'border-emerald-300 dark:border-emerald-600',
-    text: 'text-emerald-900 dark:text-emerald-100',
-    badge: 'bg-emerald-200 dark:bg-emerald-800 text-emerald-800 dark:text-emerald-200',
+    bg: 'bg-purple-50 dark:bg-purple-950/60',
+    border: 'border-purple-300 dark:border-purple-600',
+    text: 'text-purple-900 dark:text-purple-100',
+    badge: 'bg-purple-200 dark:bg-purple-800 text-purple-800 dark:text-purple-200',
   },
 };
 

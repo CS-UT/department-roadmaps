@@ -445,7 +445,7 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
         <div className="absolute inset-x-0 bottom-0 sm:inset-x-auto sm:bottom-auto sm:top-3 sm:right-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-t-2xl sm:rounded-2xl shadow-2xl border border-gray-200/80 dark:border-gray-700/80 z-10 sm:w-[340px] max-h-[50vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden">
           {/* Category accent bar */}
           <div className={`h-1.5 rounded-t-2xl ${
-            { base: 'bg-blue-400', specialized: 'bg-rose-400', elective: 'bg-amber-400', special: 'bg-emerald-400' }[selectedCourse.category]
+            { base: 'bg-blue-400', specialized: 'bg-rose-400', elective: 'bg-amber-400', special: 'bg-purple-400' }[selectedCourse.category]
           }`} />
 
           <div className="px-5 pt-4 pb-5">
@@ -471,7 +471,7 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
                 { base: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
                   specialized: 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300',
                   elective: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
-                  special: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+                  special: 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300',
                 }[selectedCourse.category]
               }`}>
                 {{ base: 'پایه', specialized: 'تخصصی', elective: 'اختیاری', special: 'خاص' }[selectedCourse.category]}

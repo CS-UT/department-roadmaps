@@ -4,7 +4,7 @@ const items: { label: string; color: string; activeColor: string; category: Cour
   { label: 'پایه', color: 'bg-blue-400', activeColor: 'ring-blue-400', category: 'base' },
   { label: 'تخصصی', color: 'bg-rose-400', activeColor: 'ring-rose-400', category: 'specialized' },
   { label: 'اختیاری', color: 'bg-amber-400', activeColor: 'ring-amber-400', category: 'elective' },
-  { label: 'خاص', color: 'bg-emerald-400', activeColor: 'ring-emerald-400', category: 'special' },
+  { label: 'خاص', color: 'bg-purple-400', activeColor: 'ring-purple-400', category: 'special' },
 ];
 
 const edgeItems = [
