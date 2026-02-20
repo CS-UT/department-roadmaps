@@ -10,7 +10,7 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-import CourseNode from './CourseNode';
+import CourseNode, { toPersianDigits } from './CourseNode';
 import Legend from './Legend';
 import { buildGraph } from './layoutEngine';
 import type { DepartmentData, CourseCategory } from '../data/types';
@@ -460,7 +460,7 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
           <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400">
             <p>
               <span className="font-semibold text-gray-700 dark:text-gray-300">واحد: </span>
-              {selectedCourse.credits}
+              {toPersianDigits(selectedCourse.credits)}
             </p>
             <p>
               <span className="font-semibold text-gray-700 dark:text-gray-300">نوع: </span>

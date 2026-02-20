@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Mindmap from './components/Mindmap';
 import { departments, departmentList } from './data';
 import { useCompletedCourses } from './hooks/useCompletedCourses';
+import { toPersianDigits } from './components/CourseNode';
 
 type DepartmentId = (typeof departmentList)[number]['id'];
 
@@ -51,7 +52,7 @@ function App() {
             {completedIds.size > 0 && (
               <span className="flex items-center gap-1.5 text-xs font-semibold text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-full px-2.5 py-1">
                 <span>✓</span>
-                <span>{completedCredits} واحد گذرانده</span>
+                <span>{toPersianDigits(completedCredits)} واحد گذرانده</span>
                 <button
                   onClick={() => {
                     if (window.confirm('آیا از پاک کردن تمام دروس گذرانده اطمینان دارید؟')) {
