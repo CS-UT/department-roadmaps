@@ -109,7 +109,7 @@ function CourseNodeComponent({ data }: NodeProps<CourseNodeType>) {
           {data.label}
         </p>
         <span
-          className={`text-[9px] font-bold w-[16px] h-[16px] rounded-full shrink-0 flex items-center justify-center ${badgeStyle}`}
+          className={`text-[9px] font-bold leading-none w-[16px] h-[16px] rounded-full shrink-0 flex items-center justify-center ${badgeStyle}`}
         >
           {toPersianDigits(data.credits)}
         </span>
