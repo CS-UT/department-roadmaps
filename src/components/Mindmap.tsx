@@ -2,7 +2,6 @@ import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 import {
   ReactFlow,
   Background,
-  Controls,
   useNodesState,
   useEdgesState,
   type NodeMouseHandler,
@@ -12,6 +11,7 @@ import '@xyflow/react/dist/style.css';
 
 import CourseNode, { toPersianDigits } from './CourseNode';
 import Legend from './Legend';
+import MapControls from './MapControls';
 import { buildGraph } from './layoutEngine';
 import type { DepartmentData, CourseCategory } from '../data/types';
 
@@ -62,6 +62,7 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
   const [showAvailable, setShowAvailable] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Build a category lookup from department courses
   const categoryMap = useMemo(() => {
@@ -385,8 +386,9 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
   return (
     <div
       key={department.id}
-      className="relative w-full"
-      style={{ height: 'calc(100vh - 112px)', minHeight: '500px' }}
+      ref={containerRef}
+      className="relative w-full bg-gray-50 dark:bg-gray-900"
+      style={{ height: 'calc(100vh - 56px)', minHeight: '500px' }}
     >
       <ReactFlow
         nodes={nodes}
@@ -412,11 +414,7 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
           color="#d1d5db"
           className="dark:!bg-gray-900 [.dark_&_.react-flow__background-pattern]:!fill-gray-700"
         />
-        <Controls
-          position="bottom-left"
-          showInteractive={false}
-          className="!bg-white dark:!bg-gray-800 !border-gray-200 dark:!border-gray-700 !rounded-lg !shadow-lg [&_button]:!bg-white [&_button]:dark:!bg-gray-800 [&_button]:!border-gray-200 [&_button]:dark:!border-gray-700 [&_button]:!rounded [&_button_svg]:!fill-gray-600 [&_button_svg]:dark:!fill-gray-300"
-        />
+        <MapControls containerRef={containerRef} />
       </ReactFlow>
 
       {/* Legend / filter — top right, horizontally scrollable on mobile */}
@@ -442,94 +440,118 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
 
       {/* Course detail panel — bottom sheet on mobile, top-left card on desktop */}
       {selectedCourse && (
-        <div className="absolute inset-x-0 bottom-0 sm:inset-x-auto sm:bottom-auto sm:top-3 sm:left-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-t-xl sm:rounded-xl px-4 py-3 shadow-xl border border-gray-200 dark:border-gray-700 z-10 sm:max-w-[280px] max-h-[45vh] overflow-y-auto">
-          <div className="flex items-center justify-between gap-2 mb-2">
-            <h3 className="font-bold text-sm text-gray-900 dark:text-gray-100">
-              {selectedCourse.name}
-            </h3>
+        <div className="absolute inset-x-0 bottom-0 sm:inset-x-auto sm:bottom-auto sm:top-3 sm:right-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-t-2xl sm:rounded-2xl shadow-2xl border border-gray-200/80 dark:border-gray-700/80 z-10 sm:w-[340px] max-h-[50vh] sm:max-h-[70vh] overflow-y-auto overflow-x-hidden">
+          {/* Category accent bar */}
+          <div className={`h-1.5 rounded-t-2xl ${
+            { base: 'bg-blue-400', specialized: 'bg-rose-400', elective: 'bg-amber-400', special: 'bg-emerald-400' }[selectedCourse.category]
+          }`} />
+
+          <div className="px-5 pt-4 pb-5">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <h3 className="font-bold text-base leading-snug text-gray-900 dark:text-gray-100">
+                {selectedCourse.name}
+              </h3>
+              <button
+                onClick={() => {
+                  setSelectedId(null);
+                  highlightConnections(null);
+                }}
+                className="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+
+            {/* Badges row */}
+            <div className="flex items-center gap-2 mb-4">
+              <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                { base: 'bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300',
+                  specialized: 'bg-rose-100 dark:bg-rose-900/40 text-rose-700 dark:text-rose-300',
+                  elective: 'bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300',
+                  special: 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300',
+                }[selectedCourse.category]
+              }`}>
+                {{ base: 'پایه', specialized: 'تخصصی', elective: 'اختیاری', special: 'خاص' }[selectedCourse.category]}
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300">
+                {toPersianDigits(selectedCourse.credits)} واحد
+              </span>
+            </div>
+
+            {/* Content sections */}
+            <div className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
+              {selectedPrereqNames && selectedPrereqNames.length > 0 && (
+                <div>
+                  <div className="font-semibold text-gray-800 dark:text-gray-200 text-xs mb-1.5 uppercase tracking-wide">پیشنیازها</div>
+                  <ul className="space-y-1 mr-0.5">
+                    {selectedCourse.prerequisites!.map((pid) => {
+                      const name = department.courses.find((c) => c.id === pid)?.name;
+                      if (!name) return null;
+                      const isMissing = missingPrereqs?.includes(name);
+                      return (
+                        <li key={pid} className={`flex items-center gap-2 text-[13px] ${isMissing ? 'text-red-500 dark:text-red-400 font-semibold' : ''}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isMissing ? 'bg-red-400' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                          {name}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+              {missingPrereqs && missingPrereqs.length > 0 && (
+                <div className="px-3 py-2 rounded-lg bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs">
+                  <span className="font-bold">پیشنیازهای ناقص</span>
+                </div>
+              )}
+              {selectedDependentNames.length > 0 && (
+                <div>
+                  <div className="font-semibold text-gray-800 dark:text-gray-200 text-xs mb-1.5 uppercase tracking-wide">وابسته‌ها</div>
+                  <ul className="space-y-1 mr-0.5">
+                    {selectedDependentNames.map((name) => (
+                      <li key={name} className="flex items-center gap-2 text-[13px]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-gray-300 dark:bg-gray-600 shrink-0" />
+                        {name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {selectedCourse.corequisites && selectedCourse.corequisites.length > 0 && (
+                <div>
+                  <div className="font-semibold text-gray-800 dark:text-gray-200 text-xs mb-1.5 uppercase tracking-wide">همنیاز</div>
+                  <div className="text-[13px]">
+                    {selectedCourse.corequisites
+                      .map((cid) => department.courses.find((c) => c.id === cid)?.name)
+                      .filter(Boolean)
+                      .join('، ')}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Action button */}
             <button
-              onClick={() => {
-                setSelectedId(null);
-                highlightConnections(null);
-              }}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-lg leading-none cursor-pointer p-1"
+              onClick={() => toggleCompleted(selectedCourse.id)}
+              className={`mt-5 w-full py-2.5 rounded-xl text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
+                completedIds.has(selectedCourse.id)
+                  ? 'bg-green-500 dark:bg-green-600 text-white shadow-sm hover:bg-green-600 dark:hover:bg-green-700 active:scale-[0.98]'
+                  : 'bg-primary-500 dark:bg-primary-600 text-white shadow-sm hover:bg-primary-600 dark:hover:bg-primary-700 active:scale-[0.98]'
+              }`}
             >
-              &times;
+              {completedIds.has(selectedCourse.id) ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                  گذرانده شد
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                  گذرانده‌ام
+                </>
+              )}
             </button>
           </div>
-          <div className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400">
-            <p>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">واحد: </span>
-              {toPersianDigits(selectedCourse.credits)}
-            </p>
-            <p>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">نوع: </span>
-              {{ base: 'پایه', specialized: 'تخصصی', elective: 'اختیاری', special: 'خاص' }[selectedCourse.category]}
-            </p>
-            {selectedPrereqNames && selectedPrereqNames.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-300">پیشنیازها: </span>
-                <ul className="mt-0.5 mr-3 list-disc">
-                  {selectedCourse.prerequisites!.map((pid) => {
-                    const name = department.courses.find((c) => c.id === pid)?.name;
-                    if (!name) return null;
-                    const isMissing = missingPrereqs?.includes(name);
-                    return (
-                      <li key={pid} className={isMissing ? 'text-red-500 dark:text-red-400 font-semibold' : ''}>
-                        {name}
-                        {isMissing && <span className="mr-1 text-[10px]">✗</span>}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            )}
-            {/* Missing prereqs notice in available view */}
-            {missingPrereqs && missingPrereqs.length > 0 && (
-              <div className="mt-1.5 px-2 py-1.5 rounded-md bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-[11px]">
-                <span className="font-bold">پیشنیازهای ناقص</span>
-              </div>
-            )}
-            {selectedDependentNames.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-300">وابسته‌ها: </span>
-                <ul className="mt-0.5 mr-3 list-disc">
-                  {selectedDependentNames.map((name) => (
-                    <li key={name}>{name}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {selectedCourse.corequisites && selectedCourse.corequisites.length > 0 && (
-              <div>
-                <span className="font-semibold text-gray-700 dark:text-gray-300">همنیاز: </span>
-                {selectedCourse.corequisites
-                  .map((cid) => department.courses.find((c) => c.id === cid)?.name)
-                  .filter(Boolean)
-                  .join('، ')}
-              </div>
-            )}
-          </div>
-          <button
-            onClick={() => toggleCompleted(selectedCourse.id)}
-            className={`mt-3 w-full py-2 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
-              completedIds.has(selectedCourse.id)
-                ? 'bg-green-500 dark:bg-green-600 text-white shadow-sm hover:bg-green-600 dark:hover:bg-green-700 active:scale-[0.97]'
-                : 'bg-primary-500 dark:bg-primary-600 text-white shadow-sm hover:bg-primary-600 dark:hover:bg-primary-700 active:scale-[0.97]'
-            }`}
-          >
-            {completedIds.has(selectedCourse.id) ? (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                گذرانده شد
-              </>
-            ) : (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-                گذرانده‌ام
-              </>
-            )}
-          </button>
         </div>
       )}
     </div>

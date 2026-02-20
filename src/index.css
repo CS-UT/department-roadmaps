@@ -54,19 +54,67 @@ body {
 .dark .react-flow__minimap {
   background-color: rgba(17, 24, 39, 0.8);
 }
-.dark .react-flow__controls button {
-  background-color: #1f2937;
-  border-color: #374151;
-  color: #d1d5db;
-}
-.dark .react-flow__controls button:hover {
-  background-color: #374151;
-}
-.dark .react-flow__controls button svg {
-  fill: #d1d5db;
-}
 .dark .react-flow__edge-path {
   stroke: #6b7280;
+}
+
+/* Custom zoom slider */
+.zoom-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+.zoom-slider::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: #d1d5db;
+}
+.dark .zoom-slider::-webkit-slider-runnable-track {
+  background: #4b5563;
+}
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  margin-top: -6px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.zoom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+.zoom-slider::-webkit-slider-thumb:active {
+  transform: scale(1.1);
+  background: #2563eb;
+}
+.dark .zoom-slider::-webkit-slider-thumb {
+  border-color: #374151;
+}
+.zoom-slider::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: #d1d5db;
+  border: none;
+}
+.dark .zoom-slider::-moz-range-track {
+  background: #4b5563;
+}
+.zoom-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+.dark .zoom-slider::-moz-range-thumb {
+  border-color: #374151;
 }
 
 /* Toast animation */
