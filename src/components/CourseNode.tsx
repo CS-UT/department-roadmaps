@@ -105,7 +105,7 @@ function CourseNodeComponent({ data }: NodeProps<CourseNodeType>) {
         className="!bg-gray-300 dark:!bg-gray-600 !w-1.5 !h-1.5 !border-0 !min-w-0 !min-h-0"
       />
       <div className="flex flex-row-reverse items-start gap-1.5 justify-between">
-        <p className={`text-[11px] font-bold leading-tight line-clamp-2 ${textStyle}`}>
+        <p dir="rtl" className={`text-[11px] font-bold leading-tight line-clamp-2 text-right ${textStyle}`}>
           {data.label}
         </p>
         <span
