@@ -34,6 +34,18 @@ function App() {
 
   const [completedIds, toggleCompleted, clearAllCompleted] = useCompletedCourses(active);
 
+  // Auto-start guided tour on first visit
+  useEffect(() => {
+    try {
+      if (!localStorage.getItem('roadmap-tour-seen')) {
+        localStorage.setItem('roadmap-tour-seen', 'true');
+        // Small delay so the mindmap renders first
+        const timer = setTimeout(() => startTour(), 600);
+        return () => clearTimeout(timer);
+      }
+    } catch { /* private browsing */ }
+  }, []);
+
   const completedCredits = currentDept.courses.reduce(
     (sum, c) => sum + (completedIds.has(c.id) ? c.credits : 0),
     0,
