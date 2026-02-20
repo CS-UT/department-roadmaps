@@ -3,10 +3,8 @@ import {
   ReactFlow,
   Background,
   Controls,
-  MiniMap,
   useNodesState,
   useEdgesState,
-  type Node,
   type NodeMouseHandler,
   BackgroundVariant,
 } from '@xyflow/react';
@@ -16,7 +14,6 @@ import CourseNode from './CourseNode';
 import Legend from './Legend';
 import { buildGraph } from './layoutEngine';
 import type { DepartmentData, CourseCategory } from '../data/types';
-import type { CourseNodeData } from './CourseNode';
 import { useCompletedCourses } from '../hooks/useCompletedCourses';
 
 const ALL_CATEGORIES: CourseCategory[] = ['base', 'specialized', 'elective', 'special'];
@@ -314,26 +311,6 @@ export default function Mindmap({ department }: MindmapProps) {
           position="bottom-left"
           showInteractive={false}
           className="!bg-white dark:!bg-gray-800 !border-gray-200 dark:!border-gray-700 !rounded-lg !shadow-lg [&_button]:!bg-white [&_button]:dark:!bg-gray-800 [&_button]:!border-gray-200 [&_button]:dark:!border-gray-700 [&_button]:!rounded [&_button_svg]:!fill-gray-600 [&_button_svg]:dark:!fill-gray-300"
-        />
-        <MiniMap
-          position="bottom-right"
-          nodeColor={(node: Node) => {
-            const data = node.data as CourseNodeData;
-            switch (data?.category) {
-              case 'base':
-                return '#60a5fa';
-              case 'specialized':
-                return '#fb7185';
-              case 'elective':
-                return '#fbbf24';
-              case 'special':
-                return '#34d399';
-              default:
-                return '#9ca3af';
-            }
-          }}
-          className="!bg-white/80 dark:!bg-gray-800/80 !border-gray-200 dark:!border-gray-700 !rounded-lg !shadow-lg hidden sm:block"
-          maskColor="rgba(0,0,0,0.08)"
         />
       </ReactFlow>
 
