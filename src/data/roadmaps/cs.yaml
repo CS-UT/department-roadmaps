@@ -1,0 +1,555 @@
+id: cs
+name: علوم کامپیوتر
+label: علوم کامپیوتر
+pdf: /CS-UT-V3.pdf
+
+courses:
+  # ─── Base Courses (پایه) ───
+  - id: cs-math-foundations
+    name: مبانی ریاضیات
+    credits: 4
+    category: base
+
+  - id: cs-calc1
+    name: ریاضی عمومی ۱
+    credits: 4
+    category: base
+
+  - id: cs-physics1
+    name: فیزیک عمومی ۱
+    credits: 3
+    category: base
+
+  - id: cs-intro-cs
+    name: مبانی کامپیوتر و برنامه‌سازی
+    credits: 4
+    category: base
+
+  - id: cs-combinatorics-foundations
+    name: مبانی ترکیبیات
+    credits: 4
+    category: base
+
+  - id: cs-prob1
+    name: احتمال ۱
+    credits: 4
+    category: base
+
+  - id: cs-biology
+    name: زیست‌شناسی عمومی
+    credits: 2
+    category: base
+
+  - id: cs-calc2
+    name: ریاضی عمومی ۲
+    credits: 4
+    category: base
+    prerequisites: [cs-calc1]
+
+  - id: cs-analysis1
+    name: آنالیز ریاضی ۱
+    credits: 4
+    category: base
+    prerequisites: [cs-math-foundations, cs-calc1]
+
+  - id: cs-physics2
+    name: فیزیک عمومی ۲
+    credits: 3
+    category: base
+    prerequisites: [cs-physics1]
+
+  - id: cs-linear-algebra
+    name: جبرخطی
+    credits: 4
+    category: base
+    prerequisites: [cs-math-foundations]
+
+  - id: cs-diff-eq
+    name: معادلات دیفرانسیل
+    credits: 4
+    category: base
+    prerequisites: [cs-calc1]
+
+  - id: cs-adv-programming
+    name: برنامه‌سازی پیشرفته
+    credits: 4
+    category: base
+    prerequisites: [cs-intro-cs]
+
+  - id: cs-stat-methods
+    name: روش‌های آماری
+    credits: 3
+    category: base
+    prerequisites: [cs-prob1]
+
+  # ─── Specialized Courses (تخصصی) ───
+  - id: cs-data-structures
+    name: ساختمان داده‌ها و الگوریتم‌ها
+    credits: 4
+    category: specialized
+    prerequisites: [cs-adv-programming]
+
+  - id: cs-algorithm-design
+    name: طراحی و تحلیل الگوریتم‌ها
+    credits: 4
+    category: specialized
+    prerequisites: [cs-data-structures]
+
+  - id: cs-logic-foundations
+    name: مبانی منطق
+    credits: 3
+    category: specialized
+    prerequisites: [cs-math-foundations]
+
+  - id: cs-computer-systems
+    name: اصول سیستم‌های کامپیوتری
+    credits: 3
+    category: specialized
+    prerequisites: [cs-adv-programming]
+
+  - id: cs-assembly
+    name: زبان ماشین و اسمبلی
+    credits: 3
+    category: specialized
+    prerequisites: [cs-computer-systems]
+
+  - id: cs-scientific-computing
+    name: محاسبات علمی
+    credits: 4
+    category: specialized
+    prerequisites: [cs-linear-algebra]
+
+  - id: cs-ai
+    name: هوش مصنوعی
+    credits: 3
+    category: specialized
+    prerequisites: [cs-data-structures]
+
+  - id: cs-data-mining
+    name: داده‌کاوی
+    credits: 3
+    category: specialized
+    prerequisites: [cs-prob1]
+
+  - id: cs-os
+    name: اصول سیستم‌های عامل
+    credits: 4
+    category: specialized
+    prerequisites: [cs-data-structures]
+
+  - id: cs-scientific-writing
+    name: نگارش علمی
+    credits: 3
+    category: specialized
+
+  - id: cs-computation-theory-foundations
+    name: مبانی نظریه محاسبه
+    credits: 3
+    category: specialized
+    prerequisites: [cs-logic-foundations]
+
+  # ─── Elective Courses (اختیاری) ───
+  - id: cs-cs-combinatorics
+    name: ترکیبیات برای علوم کامپیوتر
+    credits: 3
+    category: elective
+    prerequisites: [cs-combinatorics-foundations]
+
+  - id: cs-cs-math
+    name: ریاضی برای علوم کامپیوتر
+    credits: 3
+    category: elective
+    prerequisites: [cs-combinatorics-foundations, cs-calc2]
+
+  - id: cs-combinatorics-apps
+    name: ترکیبیات و کاربردها
+    credits: 3
+    category: elective
+    prerequisites: [cs-combinatorics-foundations]
+
+  - id: cs-graph-theory
+    name: نظریه گراف و کاربردها
+    credits: 4
+    category: elective
+    prerequisites: [cs-combinatorics-foundations]
+
+  - id: cs-computer-arch
+    name: معماری کامپیوتر
+    credits: 3
+    category: elective
+    prerequisites: [cs-assembly]
+
+  - id: cs-microprocessor
+    name: ریزپردازنده
+    credits: 3
+    category: elective
+    prerequisites: [cs-computer-systems]
+
+  - id: cs-realtime-systems
+    name: سیستم‌های بی‌درنگ
+    credits: 3
+    category: elective
+    prerequisites: [cs-os]
+
+  - id: cs-biocomputing
+    name: حسابگری زیستی
+    credits: 3
+    category: elective
+    prerequisites: [cs-adv-programming]
+
+  - id: cs-crypto
+    name: نظریه رمزنگاری مقدماتی
+    credits: 3
+    category: elective
+
+  - id: cs-info-theory
+    name: نظریه اطلاعات مقدماتی
+    credits: 3
+    category: elective
+    prerequisites: [cs-prob1]
+
+  - id: cs-coding-theory
+    name: نظریه کدگذاری مقدماتی
+    credits: 3
+    category: elective
+    prerequisites: [cs-calc2]
+
+  - id: cs-math-software
+    name: نرم‌افزارهای ریاضی
+    credits: 3
+    category: elective
+    prerequisites: [cs-scientific-computing]
+
+  - id: cs-simulation
+    name: شبیه‌سازی کامپیوتری
+    credits: 3
+    category: elective
+    prerequisites: [cs-prob1]
+
+  - id: cs-linear-programming
+    name: برنامه‌ریزی خطی
+    credits: 3
+    category: elective
+    prerequisites: [cs-linear-algebra]
+
+  - id: cs-nonlinear-programming
+    name: برنامه‌ریزی غیرخطی
+    credits: 3
+    category: elective
+    prerequisites: [cs-linear-programming]
+
+  - id: cs-combinatorial-optimization
+    name: بهینه‌سازی ترکیبیاتی
+    credits: 3
+    category: elective
+    prerequisites: [cs-linear-programming, cs-algorithm-design]
+
+  - id: cs-databases
+    name: پایگاه داده‌ها
+    credits: 3
+    category: elective
+    prerequisites: [cs-data-structures]
+
+  - id: cs-software-design
+    name: اصول طراحی نرم‌افزار
+    credits: 3
+    category: elective
+    prerequisites: [cs-os]
+
+  - id: cs-software-eng
+    name: مهندسی نرم‌افزار
+    credits: 3
+    category: elective
+    prerequisites: [cs-software-design]
+
+  - id: cs-networks
+    name: شبکه‌های کامپیوتری
+    credits: 3
+    category: elective
+    prerequisites: [cs-os]
+
+  - id: cs-internet-eng
+    name: مهندسی اینترنت
+    credits: 3
+    category: elective
+    prerequisites: [cs-networks]
+
+  - id: cs-graphics
+    name: گرافیک کامپیوتری
+    credits: 3
+    category: elective
+    prerequisites: [cs-data-structures, cs-linear-algebra]
+
+  - id: cs-dynamic-programming
+    name: برنامه‌ریزی پویا
+    credits: 3
+    category: elective
+    prerequisites: [cs-algorithm-design]
+
+  - id: cs-secure-programming
+    name: برنامه‌نویسی امن
+    credits: 3
+    category: elective
+    prerequisites: [cs-data-structures]
+
+  - id: cs-prog-languages
+    name: زبان‌های برنامه‌سازی
+    credits: 3
+    category: elective
+    prerequisites: [cs-data-structures]
+
+  - id: cs-multimedia
+    name: سیستم‌های چندرسانه‌ای
+    credits: 3
+    category: elective
+    prerequisites: [cs-data-structures]
+
+  - id: cs-info-retrieval
+    name: بازیابی اطلاعات پیشرفته
+    credits: 3
+    category: elective
+    prerequisites: [cs-data-structures]
+
+  - id: cs-signals
+    name: سیگنال‌ها و سیستم‌ها
+    credits: 3
+    category: elective
+    prerequisites: [cs-diff-eq]
+
+  - id: cs-logic
+    name: منطق
+    credits: 4
+    category: elective
+    prerequisites: [cs-logic-foundations]
+
+  - id: cs-nonclassical-logic
+    name: منطق‌های غیرکلاسیک
+    credits: 4
+    category: elective
+    prerequisites: [cs-logic-foundations]
+
+  - id: cs-lattice-theory
+    name: نظریه مقدماتی مشبکه‌ها
+    credits: 4
+    category: elective
+    prerequisites: [cs-logic-foundations]
+
+  - id: cs-compiler
+    name: کامپایلر
+    credits: 3
+    category: elective
+    prerequisites: [cs-computation-theory-foundations]
+
+  - id: cs-computation-theory
+    name: نظریه محاسبه
+    credits: 3
+    category: elective
+    prerequisites: [cs-computation-theory-foundations]
+
+  - id: cs-bioinformatics
+    name: بیوانفورماتیک مقدماتی
+    credits: 3
+    category: elective
+    prerequisites: [cs-biology, cs-data-structures]
+
+  - id: cs-oop
+    name: سیستم‌های شیءگرا
+    credits: 3
+    category: elective
+    prerequisites: [cs-adv-programming]
+
+  - id: cs-web
+    name: برنامه‌نویسی وب
+    credits: 3
+    category: elective
+    prerequisites: [cs-adv-programming]
+
+  - id: cs-adv-info-retrieval
+    name: سیستم‌های بازیابی اطلاعات پیشرفته
+    credits: 3
+    category: elective
+    prerequisites: [cs-data-structures]
+
+  # ─── Math/Stats shared electives ───
+  - id: cs-adv-calc
+    name: حساب پیشرفته
+    credits: 4
+    category: elective
+    prerequisites: [cs-calc2]
+
+  - id: cs-analysis2
+    name: آنالیز ریاضی ۲
+    credits: 4
+    category: elective
+    prerequisites: [cs-analysis1]
+
+  - id: cs-complex-funcs
+    name: توابع مختلط
+    credits: 4
+    category: elective
+    prerequisites: [cs-analysis1]
+
+  - id: cs-numerical-analysis-foundations
+    name: مبانی آنالیز عددی
+    credits: 4
+    category: elective
+    prerequisites: [cs-analysis1]
+
+  - id: cs-linear-opt1
+    name: بهینه‌سازی خطی ۱
+    credits: 4
+    category: elective
+    prerequisites: [cs-linear-algebra, cs-analysis1]
+
+  - id: cs-math-lab
+    name: آزمایشگاه ریاضی
+    credits: 2
+    category: elective
+    prerequisites: [cs-intro-cs]
+
+  - id: cs-prob2
+    name: احتمال ۲
+    credits: 4
+    category: elective
+    prerequisites: [cs-prob1]
+
+  - id: cs-math-stat1
+    name: آمار ریاضی ۱
+    credits: 3
+    category: elective
+    prerequisites: [cs-prob1]
+
+  - id: cs-math-stat2
+    name: آمار ریاضی ۲
+    credits: 3
+    category: elective
+    prerequisites: [cs-math-stat1]
+
+  - id: cs-stochastic1
+    name: فرآیند تصادفی ۱
+    credits: 3
+    category: elective
+    prerequisites: [cs-prob1]
+
+  - id: cs-sampling1
+    name: روش‌های نمونه‌گیری ۱
+    credits: 3
+    category: elective
+    prerequisites: [cs-stat-methods]
+
+  - id: cs-sampling2
+    name: روش‌های نمونه‌گیری ۲
+    credits: 3
+    category: elective
+    prerequisites: [cs-sampling1]
+
+  - id: cs-regression1
+    name: رگرسیون ۱
+    credits: 3
+    category: elective
+    prerequisites: [cs-stat-methods, cs-linear-algebra]
+
+  - id: cs-nonparametric
+    name: روش‌های ناپارامتری
+    credits: 3
+    category: elective
+    prerequisites: [cs-prob1]
+
+  - id: cs-time-series1
+    name: سری‌های زمانی ۱
+    credits: 3
+    category: elective
+    prerequisites: [cs-stochastic1]
+
+  - id: cs-experiment-design1
+    name: طرح آزمایش‌ها ۱
+    credits: 3
+    category: elective
+    prerequisites: [cs-regression1]
+
+  - id: cs-experiment-design2
+    name: طرح آزمایش‌ها ۲
+    credits: 3
+    category: elective
+    prerequisites: [cs-experiment-design1]
+
+  - id: cs-multivariate
+    name: تحلیل چند متغیره آماری
+    credits: 3
+    category: elective
+    prerequisites: [cs-math-stat1]
+
+  - id: cs-discrete-data
+    name: تحلیل داده‌های گسسته
+    credits: 3
+    category: elective
+    prerequisites: [cs-regression1]
+
+  - id: cs-stat-learning
+    name: یادگیری آماری مقدماتی
+    credits: 3
+    category: elective
+    prerequisites: [cs-regression1]
+
+  - id: cs-stat-computing
+    name: محاسبات آماری
+    credits: 3
+    category: elective
+    prerequisites: [cs-experiment-design1]
+
+  - id: cs-economics
+    name: مبانی علم اقتصاد
+    credits: 3
+    category: elective
+
+  - id: cs-algebra1
+    name: جبر ۱
+    credits: 4
+    category: elective
+    prerequisites: [cs-math-foundations]
+
+  - id: cs-algebra2
+    name: جبر ۲
+    credits: 4
+    category: elective
+    prerequisites: [cs-algebra1]
+
+  - id: cs-number-theory
+    name: نظریه مقدماتی اعداد
+    credits: 4
+    category: elective
+    prerequisites: [cs-algebra1]
+
+  - id: cs-topology
+    name: توپولوژی عمومی
+    credits: 4
+    category: elective
+    prerequisites: [cs-analysis1]
+
+  # ─── Special Courses (خاص) ───
+  - id: cs-physics-lab1
+    name: آزمایشگاه فیزیک عمومی ۱
+    credits: 1
+    category: special
+    corequisites: [cs-physics1]
+
+  - id: cs-physics-lab2
+    name: آزمایشگاه فیزیک عمومی ۲
+    credits: 1
+    category: special
+    corequisites: [cs-physics2]
+
+  - id: cs-topics1
+    name: مباحثی در علوم کامپیوتر ۱
+    credits: 3
+    category: special
+
+  - id: cs-topics2
+    name: مباحثی در علوم کامپیوتر ۲
+    credits: 3
+    category: special
+
+  - id: cs-project
+    name: پروژه
+    credits: 3
+    category: special
