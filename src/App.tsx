@@ -95,7 +95,7 @@ function App() {
               <button
                 onClick={() => setShowContribute((v) => !v)}
                 className="px-2.5 py-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer whitespace-nowrap border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 dark:text-gray-500 hover:border-primary-400 hover:text-primary-500 dark:hover:border-primary-500 dark:hover:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20"
-                title="افزودن نقشه راه گروه جدید"
+                title="افزودن نقشه راه رشته جدید"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
               </button>
@@ -105,7 +105,7 @@ function App() {
                     <div className="w-7 h-7 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 shrink-0">
                       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                     </div>
-                    <h3 className="font-bold text-gray-900 dark:text-gray-100">نقشه راه گروهتان را اضافه کنید</h3>
+                    <h3 className="font-bold text-gray-900 dark:text-gray-100">نقشه راه رشته‌تان را اضافه کنید</h3>
                   </div>
                   <p className="text-gray-600 dark:text-gray-400 leading-relaxed mb-3">
                     فقط کافیست یک فایل YAML بسازید و Pull Request بزنید — نیازی به تغییر کد نیست!
