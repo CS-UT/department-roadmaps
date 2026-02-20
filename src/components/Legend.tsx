@@ -49,6 +49,7 @@ export default function Legend({ activeCategories, onToggle, showAvailable, onTo
       <span className="mx-0.5 text-gray-300 dark:text-gray-600">|</span>
       {/* Eye toggle: available courses view */}
       <button
+        data-tour="available-toggle"
         onClick={onToggleAvailable}
         className={`flex items-center gap-1 px-2 py-1 rounded-full transition-all cursor-pointer select-none ${
           showAvailable

@@ -420,7 +420,7 @@ export default function Mindmap({ department, completedIds, toggleCompleted }: M
       </ReactFlow>
 
       {/* Legend / filter — top right, horizontally scrollable on mobile */}
-      <div className="absolute top-2 right-2 sm:top-3 sm:right-3 left-12 sm:left-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shadow-md border border-gray-200 dark:border-gray-700 z-10 overflow-x-auto">
+      <div data-tour="legend" className="absolute top-2 right-2 sm:top-3 sm:right-3 left-12 sm:left-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-2 sm:px-3 py-1.5 sm:py-2 shadow-md border border-gray-200 dark:border-gray-700 z-10 overflow-x-auto">
         <Legend
           activeCategories={activeCategories}
           onToggle={handleCategoryToggle}

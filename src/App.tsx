@@ -3,6 +3,7 @@ import Mindmap from './components/Mindmap';
 import { departments, departmentList } from './data';
 import { useCompletedCourses } from './hooks/useCompletedCourses';
 import { toPersianDigits } from './components/CourseNode';
+import { startTour } from './components/onboarding';
 
 type DepartmentId = (typeof departmentList)[number]['id'];
 
@@ -94,6 +95,13 @@ function App() {
               انتخاب واحد
             </a>
             <div className="h-5 w-px bg-gray-200 dark:bg-gray-700 hidden sm:block shrink-0" />
+            <button
+              onClick={() => startTour()}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              title="راهنمای استفاده"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </button>
             <a
               href={currentInfo.file}
               download
