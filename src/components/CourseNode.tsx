@@ -2,6 +2,10 @@ import { memo } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import type { CourseCategory } from '../data/types';
 
+const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+export const toPersianDigits = (n: number | string): string =>
+  String(n).replace(/\d/g, (d) => persianDigits[+d]);
+
 export interface CourseNodeData {
   label: string;
   credits: number;
@@ -43,12 +47,36 @@ const categoryStyles: Record<CourseCategory, { bg: string; border: string; text:
 
 function CourseNodeComponent({ data }: NodeProps<CourseNodeType>) {
   const style = categoryStyles[data.category];
-  const dimmed = data.dimmed ? 'opacity-15' : '';
+  const isCompleted = !!data.completed;
+  const isDimmed = !!data.dimmed;
+  const isCompletedDimmed = isCompleted && isDimmed;
+
+  // Three visual tiers:
+  //   1. Normal completed: full color + green accent + badge
+  //   2. Completed but dimmed (available view): muted green card, still recognizable
+  //   3. Locked/dimmed: very faint ghost
+  const dimmed = isDimmed && !isCompletedDimmed ? 'opacity-15' : '';
+
   const highlighted = data.highlighted
     ? 'ring-2 ring-primary-500 dark:ring-primary-400 shadow-lg shadow-primary-200/60 dark:shadow-primary-800/60 scale-105'
     : '';
-  const completed = data.completed && !data.dimmed;
-  const completedStyle = data.completed ? 'opacity-80 border-r-[3px] border-r-green-500' : '';
+
+  // Completed-dimmed gets a special green-tinted style instead of category colors
+  const bgStyle = isCompletedDimmed
+    ? 'bg-green-100/60 dark:bg-green-900/25'
+    : style.bg;
+  const borderStyle = isCompletedDimmed
+    ? 'border-green-300 dark:border-green-700'
+    : isCompleted
+      ? `${style.border} border-r-[3px] border-r-green-500`
+      : style.border;
+  const textStyle = isCompletedDimmed
+    ? 'text-green-800/50 dark:text-green-400/50'
+    : style.text;
+  const badgeStyle = isCompletedDimmed
+    ? 'bg-green-200/50 dark:bg-green-800/30 text-green-700/50 dark:text-green-400/40'
+    : style.badge;
+  const opacityStyle = isCompleted && !isDimmed ? 'opacity-80' : '';
 
   return (
     <div
@@ -57,11 +85,17 @@ function CourseNodeComponent({ data }: NodeProps<CourseNodeType>) {
         transition-all duration-200
         w-[140px]
         hover:shadow-md hover:scale-[1.03]
-        ${style.bg} ${style.border} ${dimmed} ${highlighted} ${completedStyle}
+        ${bgStyle} ${borderStyle} ${dimmed} ${highlighted} ${opacityStyle}
       `}
     >
-      {completed && (
+      {/* Checkmark badge: visible for completed (normal), smaller muted for completed-dimmed */}
+      {isCompleted && !isDimmed && (
         <span className="absolute -top-1.5 -right-1.5 w-[14px] h-[14px] rounded-full bg-green-500 flex items-center justify-center text-white text-[8px] leading-none shadow-sm z-10">
+          ✓
+        </span>
+      )}
+      {isCompletedDimmed && (
+        <span className="absolute -top-1 -right-1 w-[12px] h-[12px] rounded-full bg-green-400/60 dark:bg-green-500/40 flex items-center justify-center text-white/80 text-[7px] leading-none z-10">
           ✓
         </span>
       )}
@@ -71,13 +105,13 @@ function CourseNodeComponent({ data }: NodeProps<CourseNodeType>) {
         className="!bg-gray-300 dark:!bg-gray-600 !w-1.5 !h-1.5 !border-0 !min-w-0 !min-h-0"
       />
       <div className="flex items-start gap-1.5 justify-between">
-        <p className={`text-[11px] font-bold leading-tight line-clamp-2 ${style.text}`}>
+        <p className={`text-[11px] font-bold leading-tight line-clamp-2 ${textStyle}`}>
           {data.label}
         </p>
         <span
-          className={`text-[9px] font-bold px-1 py-0.5 rounded-full shrink-0 leading-none ${style.badge}`}
+          className={`text-[9px] font-bold w-[16px] h-[16px] rounded-full shrink-0 flex items-center justify-center ${badgeStyle}`}
         >
-          {data.credits}
+          {toPersianDigits(data.credits)}
         </span>
       </div>
       <Handle
