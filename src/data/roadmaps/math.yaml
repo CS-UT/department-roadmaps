@@ -33,7 +33,7 @@ courses:
   - id: ma-combinatorics-foundations
     name: مبانی ترکیبیات
     credits: 4
-    category: base
+    category: specialized
 
   - id: ma-calc2
     name: ریاضی عمومی ۲
@@ -77,35 +77,35 @@ courses:
     category: elective
     prerequisites: [ma-prob1]
 
-  # ─── Specialized Courses (تخصصی) — CS track ───
+  # ─── Elective Courses (اختیاری) — CS track ───
   - id: ma-data-structures
     name: ساختمان داده‌ها و الگوریتم‌ها
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [ma-adv-programming]
 
   - id: ma-algorithm-design
     name: طراحی و تحلیل الگوریتم‌ها
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [ma-data-structures]
 
   - id: ma-logic-foundations
     name: مبانی منطق
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-math-foundations]
 
   - id: ma-computer-systems
     name: اصول سیستم‌های کامپیوتری
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-adv-programming]
 
   - id: ma-assembly
     name: زبان ماشین و اسمبلی
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-computer-systems]
 
   - id: ma-scientific-computing
@@ -117,19 +117,19 @@ courses:
   - id: ma-ai
     name: هوش مصنوعی
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-data-structures]
 
   - id: ma-data-mining
     name: داده‌کاوی
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-prob1]
 
   - id: ma-os
     name: اصول سیستم‌های عامل
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [ma-data-structures]
 
   - id: ma-scientific-writing
@@ -140,7 +140,7 @@ courses:
   - id: ma-computation-theory-foundations
     name: مبانی نظریه محاسبه
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-logic-foundations]
 
   # ─── Specialized Courses (تخصصی) — Math track ───
@@ -198,83 +198,83 @@ courses:
     category: specialized
     prerequisites: [ma-algebra1]
 
-  # ─── Specialized Courses (تخصصی) — Stats track ───
+  # ─── Elective Courses (اختیاری) — Stats track ───
   - id: ma-prob2
     name: احتمال ۲
     credits: 4
-    category: specialized
+    category: elective
     prerequisites: [ma-prob1]
 
   - id: ma-math-stat1
     name: آمار ریاضی ۱
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-prob1]
 
   - id: ma-math-stat2
     name: آمار ریاضی ۲
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-math-stat1]
 
   - id: ma-stochastic1
     name: فرآیند تصادفی ۱
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-prob1]
 
   - id: ma-regression1
     name: رگرسیون ۱
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-stat-methods, ma-linear-algebra]
 
   - id: ma-nonparametric
     name: روش‌های ناپارامتری
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-prob1]
 
   - id: ma-sampling1
     name: روش‌های نمونه‌گیری ۱
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-stat-methods]
 
   - id: ma-experiment-design1
     name: طرح آزمایش‌ها ۱
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-regression1]
 
   - id: ma-multivariate
     name: تحلیل چند متغیره آماری
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-math-stat1]
 
   - id: ma-discrete-data
     name: تحلیل داده‌های گسسته
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-regression1]
 
   - id: ma-stat-learning
     name: یادگیری آماری مقدماتی
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-regression1]
 
   - id: ma-time-series1
     name: سری‌های زمانی ۱
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-stochastic1]
 
   - id: ma-stat-computing
     name: محاسبات آماری
     credits: 3
-    category: specialized
+    category: elective
     prerequisites: [ma-experiment-design1]
 
   # ─── Elective Courses (اختیاری) — Math ───
