@@ -39,9 +39,9 @@ export default function Legend({ activeCategories, onToggle, showAvailable, onTo
           </button>
         );
       })}
-      <span className="mx-0.5 text-gray-300 dark:text-gray-600">|</span>
+      <span className="mx-0.5 text-gray-300 dark:text-gray-600 hidden sm:inline">|</span>
       {edgeItems.map((item) => (
-        <span key={item.label} className="flex items-center gap-1">
+        <span key={item.label} className="hidden sm:flex items-center gap-1">
           <span className={item.style} />
           {item.label}
         </span>
