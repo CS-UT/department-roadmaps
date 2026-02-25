@@ -28,12 +28,12 @@ courses:
   - id: cs-combinatorics-foundations
     name: مبانی ترکیبیات
     credits: 4
-    category: base
+    category: specialized
 
   - id: cs-prob1
     name: احتمال ۱
     credits: 4
-    category: base
+    category: specialized
 
   - id: cs-biology
     name: زیست‌شناسی عمومی
@@ -49,7 +49,7 @@ courses:
   - id: cs-analysis1
     name: آنالیز ریاضی ۱
     credits: 4
-    category: base
+    category: elective
     prerequisites: [cs-math-foundations, cs-calc1]
 
   - id: cs-physics2
@@ -61,25 +61,25 @@ courses:
   - id: cs-linear-algebra
     name: جبرخطی
     credits: 4
-    category: base
+    category: specialized
     prerequisites: [cs-math-foundations]
 
   - id: cs-diff-eq
     name: معادلات دیفرانسیل
     credits: 4
-    category: base
+    category: specialized
     prerequisites: [cs-calc1]
 
   - id: cs-adv-programming
     name: برنامه‌سازی پیشرفته
     credits: 4
-    category: base
+    category: specialized
     prerequisites: [cs-intro-cs]
 
   - id: cs-stat-methods
     name: روش‌های آماری
     credits: 3
-    category: base
+    category: specialized
     prerequisites: [cs-prob1]
 
   # ─── Specialized Courses (تخصصی) ───
@@ -140,7 +140,7 @@ courses:
   - id: cs-scientific-writing
     name: نگارش علمی
     credits: 3
-    category: special
+    category: elective
 
   - id: cs-computation-theory-foundations
     name: مبانی نظریه محاسبه
@@ -194,13 +194,13 @@ courses:
   - id: cs-biocomputing
     name: حسابگری زیستی
     credits: 3
-    category: elective
+    category: special
     prerequisites: [cs-adv-programming]
 
   - id: cs-crypto
     name: نظریه رمزنگاری مقدماتی
     credits: 3
-    category: elective
+    category: special
 
   - id: cs-info-theory
     name: نظریه اطلاعات مقدماتی
@@ -505,7 +505,7 @@ courses:
   - id: cs-algebra1
     name: جبر ۱
     credits: 4
-    category: elective
+    category: specialized
     prerequisites: [cs-math-foundations]
 
   - id: cs-algebra2
@@ -530,13 +530,13 @@ courses:
   - id: cs-physics-lab1
     name: آزمایشگاه فیزیک عمومی ۱
     credits: 1
-    category: special
+    category: elective
     corequisites: [cs-physics1]
 
   - id: cs-physics-lab2
     name: آزمایشگاه فیزیک عمومی ۲
     credits: 1
-    category: special
+    category: elective
     corequisites: [cs-physics2]
 
   - id: cs-topics1
