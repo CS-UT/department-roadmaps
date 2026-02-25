@@ -81,7 +81,7 @@ export default function MapControls({ containerRef }: MapControlsProps) {
 
   return (
     <>
-      <Panel position="bottom-center" className="!mb-3 !mx-2">
+      <Panel position="bottom-center" className="!mb-3 sm:!mb-3 !mx-2" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
         <div className="flex items-center gap-0.5 sm:gap-1 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md rounded-2xl shadow-xl border border-gray-200/80 dark:border-gray-700/80 px-1.5 sm:px-2.5 py-1.5 sm:py-2">
           {/* Zoom out */}
           <button
